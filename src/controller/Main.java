@@ -1,25 +1,14 @@
 package controller;
-
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
-
-import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
 
 
     public static void main(String[] args) {
-        HashMap<Integer, Task> allTasks;
-        HashMap<Integer, Epic> allEpics;
-        HashMap<Integer, SubTask> allSubTusk;
-
-        {
-            allTasks = new HashMap<>();
-            allEpics = new HashMap<>();
-            allSubTusk = new HashMap<>();
-        }
+        Manager manager = new Manager();
         while (true) {
             try {
             Scanner sc = new Scanner(System.in);
@@ -35,45 +24,34 @@ public class Main {
             System.out.println("9. Удалить задачу по ID");
             System.out.println("10. Удалить все задачи");
             System.out.println("11. Указать подзадачу, которая сейчас в работе");
-            System.out.println("12. Указать подзадачу, 'пик, которая завершена");
+            System.out.println("12. Указать подзадачу, которая завершена");
             System.out.println("Введите команду 131313 для выхода из программы");
 
             int command = sc.nextInt();
             if(command == 1){
-                Task.createTask(allTasks);
+                Manager.createTask(manager.allTasks);
             }else if (command==2){
-                Epic.createEpic(allEpics);
+                Manager.createEpic(manager.allEpics);
             }else if(command==3){
-                SubTask.createSubtask(allSubTusk,allEpics);
+                Manager.createSubtask(manager.allSubTusk,manager.allEpics);
             }else if(command==4){
-                Task.showListtasks(allTasks);
+                Manager.showListtasks(manager.allTasks);
             }else if(command==5){
-                Epic.showListEpics(allEpics);
+                Manager.showListEpics(manager.allEpics);
             }else if(command==6){
-                SubTask.getListSubtasksByEpicID(allSubTusk,allEpics);
+                Manager.getListSubtasksByEpicID(manager.allSubTusk,manager.allEpics);
             }else if(command==7){
-                System.out.println("Выбирите типа задачи который необходи показать");
-                System.out.println("Если нужна задача - введите '1'");
-                System.out.println("Если нужен эпик - введите '2'");
-                System.out.println("Если нужна подзадача - введите '3'");
-                int numType = sc.nextInt();
-                if(numType==1){
-                    Task.getTaskByID(allTasks);
-                }else if(numType==2){
-                    Epic.getEpicByID(allEpics);
-                }else if(numType==3){
-                    SubTask.getSubtaskByID(allSubTusk);
-                }
+                Manager.getAnyByID(manager.allTasks,manager.allEpics,manager.allSubTusk);
             } else if(command==8){
-                Task.updateTask(allTasks);
+                Manager.getUpdateByID(manager.allTasks, manager.allEpics, manager.allSubTusk);
             }else if(command==9){
-                Task.removeTaskByID(allTasks);
+                Manager.removeTaskByID(manager.allTasks);
             }else if(command==10){
-                Task.removeAllTask(allTasks);
+                Manager.removeAllTask(manager.allTasks);
             }else if(command==11){
-                SubTask.toProgressSubtask(allSubTusk,allEpics);
+                SubTask.toProgressSubtask(manager.allSubTusk,manager.allEpics);
             }else if(command==12){
-                SubTask.doneSubtask(allSubTusk,allEpics);
+                SubTask.doneSubtask(manager.allSubTusk,manager.allEpics);
             }
         } catch (Exception e){
                 System.out.println("Введите корректное значение");}
