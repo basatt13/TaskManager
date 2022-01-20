@@ -2,10 +2,12 @@ package controller;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
+import tasks.TaskManager;
+
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class Manager {
+public class Manager implements TaskManager {
     HashMap<Integer, Task> allTasks;
     HashMap<Integer, Epic> allEpics;
     HashMap<Integer, SubTask> allSubTusk;
@@ -15,8 +17,8 @@ public class Manager {
         allEpics = new HashMap<>();
         allSubTusk = new HashMap<>();
     }
-
-    public static void createTask(HashMap<Integer, Task> allTasks) {
+    @Override
+    public void createTask(HashMap<Integer, Task> allTasks) {
         System.out.println("Введите название задачи");
         Scanner scan = new Scanner(System.in);
         String name = scan.nextLine();
@@ -27,8 +29,8 @@ public class Manager {
         Task task = new Task(numberTask, name, details, status);
         Manager.addTasks(task, allTasks);
     }
-
-    public static void createEpic (HashMap<Integer, Epic> allEpics) {
+    @Override
+    public void createEpic (HashMap<Integer, Epic> allEpics) {
         System.out.println("Введите название эпика");
         Scanner scan = new Scanner(System.in);
         String name = scan.nextLine();
@@ -39,8 +41,8 @@ public class Manager {
         Epic epic = new Epic(numberEpics, name, details, status);
         Manager.addEpics(epic, allEpics);
     }
-
-    public static void createSubtask(HashMap<Integer, SubTask> allSubTusk, HashMap<Integer, Epic> allEpics) {
+    @Override
+    public void createSubtask(HashMap<Integer, SubTask> allSubTusk, HashMap<Integer, Epic> allEpics) {
         Scanner scanner = new Scanner(System.in);
         if (allEpics.isEmpty()) {
             System.out.println("Сначала создайте эпик");
@@ -61,22 +63,29 @@ public class Manager {
             subTask.setEpic(idEpic);
         }
     }
-
-    public static void showListtasks(HashMap<Integer, Task> allTasks) {
+    @Override
+    public void showListtasks(HashMap<Integer, Task> allTasks) {
         System.out.println("Список всех задач");
         for (Task task : allTasks.values()) {
             System.out.println(task.toString());
         }
     }
-
+    @Override
     public static void showListEpics(HashMap<Integer, Epic> allEpics) {
         System.out.println("Список всех эпиков'");
         for (Epic epic : allEpics.values()) {
             System.out.println(epic.toString());
         }
     }
-
-    public static void getListSubtasksByEpicID(HashMap<Integer, SubTask> allSubTusk, HashMap<Integer, Epic> allEpics) {
+    @Override
+    public void showListSubtask(HashMap<Integer, SubTask> allSubTusk) {
+        System.out.println("Список всех подзадач'");
+        for (int epic : allSubTusk.keySet()) {
+            System.out.println(allSubTusk.get(epic).toString());
+        }
+    }
+    @Override
+    public void getListSubtasksByEpicID(HashMap<Integer, SubTask> allSubTusk, HashMap<Integer, Epic> allEpics) {
         Scanner sc = new Scanner(System.in);
         Manager.showListEpics(allEpics);
         System.out.println("Введите номер эпика для которого нужно получить список всех подзадач");
@@ -88,16 +97,6 @@ public class Manager {
         }
     }
 
-    public static void getTaskByID(HashMap<Integer, Task> allTasks) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите ID задачи. которую необходимо показать");
-        int ID = scanner.nextInt();
-        for (Task k : allTasks.values()) {
-            if (k.getID() == ID) {
-                System.out.println(k.toString());
-            }
-        }
-    }
 
     public static void addTasks(Task o, HashMap<Integer, Task> allTasks) {
         allTasks.put(o.getID(), o);
@@ -106,8 +105,8 @@ public class Manager {
     public static void addEpics(Epic epic, HashMap<Integer, Epic> allEpics) {
         allEpics.put(epic.getID(), epic);
     }
-
-    public static void getUpdateByID(HashMap<Integer, Task> allTasks, HashMap<Integer, Epic> allEpics,
+    @Override
+    public void getUpdateByID(HashMap<Integer, Task> allTasks, HashMap<Integer, Epic> allEpics,
                                      HashMap<Integer, SubTask> allSubTusk) {
         Scanner sc = new Scanner(System.in);
         System.out.println("Выбирите типа задачи который необходи обновить");
@@ -123,8 +122,8 @@ public class Manager {
             SubTask.updateSubtask(allSubTusk);
         }
     }
-
-    public static void getAnyByID(HashMap<Integer, Task> allTasks, HashMap<Integer, Epic> allEpics,
+    @Override
+    public void getAnyByID(HashMap<Integer, Task> allTasks, HashMap<Integer, Epic> allEpics,
                                   HashMap<Integer, SubTask> allSubTusk) {
         Scanner sc = new Scanner(System.in);
         System.out.println("Выбирите типа задачи который необходи показать");
@@ -133,15 +132,15 @@ public class Manager {
         System.out.println("Если нужна подзадача - введите '3'");
         int numType = sc.nextInt();
         if (numType == 1) {
-            getTaskByID(allTasks);
+            Task.getTaskByID(allTasks);
         } else if (numType == 2) {
             Epic.getEpicByID(allEpics);
         } else if (numType == 3) {
             SubTask.getSubtaskByID(allSubTusk);
         }
     }
-
-    public static void removeTaskByID(HashMap<Integer, Task> allTasks) {
+    @Override
+    public void removeTaskByID(HashMap<Integer, Task> allTasks) {
         Scanner scanner = new Scanner(System.in);
         Manager.showListtasks(allTasks);
         System.out.println("Введите ID задачи, которую необходимо удалить");
@@ -152,12 +151,12 @@ public class Manager {
             }
         }
     }
-
-    public static void removeAllTask(HashMap<Integer, Task> allTasks) {
+    @Override
+    public void removeAllTask(HashMap<Integer, Task> allTasks) {
         allTasks.clear();
     }
-
-    public static void updateStatusEpic(HashMap<Integer, Epic> allEpics, HashMap<Integer, SubTask> allSubTusk) {
+    @Override
+    public void updateStatusEpic(HashMap<Integer, Epic> allEpics, HashMap<Integer, SubTask> allSubTusk) {
         for (Epic k : allEpics.values()) {
             int countStatusNew = 0;
             int countStatusDone = 0;
@@ -190,6 +189,8 @@ public class Manager {
         }
         Manager.showListEpics(allEpics);
     }
+
+
 }
 
 
