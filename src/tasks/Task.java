@@ -1,5 +1,7 @@
 package tasks;
-import controller.Manager;
+import controller.Managers;
+import controller.Status;
+
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
@@ -8,9 +10,9 @@ public class Task {
     int ID;
     private String name;
     private String details;
-    private String status;
+    private Status status;
 
-    public Task(int ID, String name, String details, String status) {
+    public Task(int ID, String name, String details, Status status) {
         this.ID = ID;
         this.name = name;
         this.details = details;
@@ -57,7 +59,7 @@ public class Task {
         return details;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
@@ -67,7 +69,7 @@ public class Task {
 
     public static void updateTask(HashMap<Integer, Task> allTasks) {
         Scanner scanner = new Scanner(System.in);
-        Manager.showListtasks(allTasks);
+        Managers.getDefault().showListTasks(allTasks);
         System.out.println("Введите ID задачи, которую необходимо обновить");
         int ID = scanner.nextInt();
         for (Task k : allTasks.values()) {
@@ -78,7 +80,22 @@ public class Task {
                 System.out.println("Введите описание задачи ");
                 String details = scan.nextLine();
                 Task task = new Task(ID, name, details, k.getStatus());
-                Manager.addTasks(task, allTasks);
+                addTasks(task, allTasks);
+            }
+        }
+    }
+
+    public static void addTasks(Task o, HashMap<Integer, Task> allTasks) {
+        allTasks.put(o.getID(), o);
+    }
+
+    public static void getTaskByID(HashMap<Integer, Task> allTasks) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите ID задачи. которую необходимо показать");
+        int ID = scanner.nextInt();
+        for (Task k : allTasks.values()) {
+            if (k.getID() == ID) {
+                System.out.println(k.toString());
             }
         }
     }

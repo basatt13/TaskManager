@@ -1,10 +1,12 @@
 package tasks;
-import controller.Manager;
+import controller.Managers;
+import controller.Status;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
-
-public class Epic extends Task{
+public class Epic extends Task {
 
     public ArrayList<Integer> getSubtasks() {
         return subtasks;
@@ -15,21 +17,20 @@ public class Epic extends Task{
     public void setSubtasks(ArrayList<Integer> subtasks) {
         this.subtasks = subtasks;
     }
+
     @Override
     public String toString() {
         return "Epic{" +
                 "} " + super.toString();
     }
 
-    public Epic(int ID, String name, String details, String status) {
+    public Epic(int ID, String name, String details, Status status) {
         super(ID, name, details, status);
     }
 
-
-
     public static void updateEpic(HashMap<Integer, Epic> allEpic) {
         Scanner scanner = new Scanner(System.in);
-        Manager.showListEpics(allEpic);
+        Managers.getDefault().showListEpics(allEpic);
         System.out.println("Введите ID эпика, который необходимо обновить");
         int ID = scanner.nextInt();
         for (Epic k : allEpic.values()) {
@@ -46,18 +47,31 @@ public class Epic extends Task{
         }
     }
 
-    public static int generateNumberEpics(HashMap <Integer, Epic> allEpics) {
+    public static int generateNumberEpics(HashMap<Integer, Epic> allEpics) {
         return allEpics.size() + 1;
     }
 
-    public static void getEpicByID(HashMap<Integer, Epic> allEpics){
+    public static void addEpics(Epic epic, HashMap<Integer, Epic> allEpics) {
+        allEpics.put(epic.getID(), epic);
+    }
+
+    public static void getEpicByID(HashMap<Integer, Epic> allEpics, List<Task> historyList) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Введите ID эпика, который необходимо показать");
         int ID = scanner.nextInt();
-        for(Epic k: allEpics.values()){
-            if(k.getID()==ID){
+        for (Epic k : allEpics.values()) {
+            if (k.getID() == ID) {
                 System.out.println(k.toString());
+                if (historyList.size() < 10) {
+                    historyList.add(historyList.size(), k);
+                } else if (historyList.size() == 10) {
+                    historyList.remove(0);
+                    historyList.add(historyList.size(), k);
                 }
             }
         }
     }
+}
+
+
+

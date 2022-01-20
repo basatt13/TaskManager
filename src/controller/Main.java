@@ -1,14 +1,11 @@
 package controller;
-import tasks.Epic;
 import tasks.SubTask;
-import tasks.Task;
 import java.util.Scanner;
 
 public class Main {
 
-
     public static void main(String[] args) {
-        Manager manager = new Manager();
+        InMemoryTasksManager manager = Managers.getDefault();
         while (true) {
             try {
             Scanner sc = new Scanner(System.in);
@@ -25,36 +22,41 @@ public class Main {
             System.out.println("10. Удалить все задачи");
             System.out.println("11. Указать подзадачу, которая сейчас в работе");
             System.out.println("12. Указать подзадачу, которая завершена");
+            System.out.println("13. Показать историю");
             System.out.println("Введите команду 131313 для выхода из программы");
 
             int command = sc.nextInt();
             if(command == 1){
-                Manager.createTask(manager.allTasks);
+                manager.createTask(manager.allTasks);
             }else if (command==2){
-                Manager.createEpic(manager.allEpics);
+                manager.createEpic(manager.allEpics);
             }else if(command==3){
-                Manager.createSubtask(manager.allSubTusk,manager.allEpics);
+                manager.createSubtask(manager.allSubTusk,manager.allEpics);
             }else if(command==4){
-                Manager.showListtasks(manager.allTasks);
+                manager.showListTasks(manager.allTasks);
             }else if(command==5){
-                Manager.showListEpics(manager.allEpics);
+                manager.showListEpics(manager.allEpics);
             }else if(command==6){
-                Manager.getListSubtasksByEpicID(manager.allSubTusk,manager.allEpics);
+                manager.getListSubtasksByEpicID(manager.allSubTusk,manager.allEpics);
             }else if(command==7){
-                Manager.getAnyByID(manager.allTasks,manager.allEpics,manager.allSubTusk);
+                manager.getAnyByID(manager.allTasks,manager.allEpics,manager.allSubTusk,manager.historyList);
             } else if(command==8){
-                Manager.getUpdateByID(manager.allTasks, manager.allEpics, manager.allSubTusk);
+                manager.getUpdateByID(manager.allTasks, manager.allEpics, manager.allSubTusk);
             }else if(command==9){
-                Manager.removeTaskByID(manager.allTasks);
+                manager.removeTaskByID(manager.allTasks);
             }else if(command==10){
-                Manager.removeAllTask(manager.allTasks);
+                manager.removeAllTask(manager.allTasks);
             }else if(command==11){
                 SubTask.toProgressSubtask(manager.allSubTusk,manager.allEpics);
             }else if(command==12){
                 SubTask.doneSubtask(manager.allSubTusk,manager.allEpics);
             }
+            else if(command==13){
+                manager.history();
+            }
         } catch (Exception e){
-                System.out.println("Введите корректное значение");}
+                System.out.println("Введите корректное значение");
+            }
         }
     }
 }
