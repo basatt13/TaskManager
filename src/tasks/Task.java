@@ -1,10 +1,8 @@
 package tasks;
-import controller.Managers;
 import controller.Status;
-
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.Scanner;
+
 
 public class Task {
     int ID;
@@ -65,39 +63,6 @@ public class Task {
 
     public static int generateNumberTask(HashMap<Integer, Task> allTasks) {
         return allTasks.size() + 1;
-    }
-
-    public static void updateTask(HashMap<Integer, Task> allTasks) {
-        Scanner scanner = new Scanner(System.in);
-        Managers.getDefault().showListTasks(allTasks);
-        System.out.println("Введите ID задачи, которую необходимо обновить");
-        int ID = scanner.nextInt();
-        for (Task k : allTasks.values()) {
-            if (k.getID() == ID) {
-                System.out.println("Введите название задачи");
-                Scanner scan = new Scanner(System.in);
-                String name = scan.nextLine();
-                System.out.println("Введите описание задачи ");
-                String details = scan.nextLine();
-                Task task = new Task(ID, name, details, k.getStatus());
-                addTasks(task, allTasks);
-            }
-        }
-    }
-
-    public static void addTasks(Task o, HashMap<Integer, Task> allTasks) {
-        allTasks.put(o.getID(), o);
-    }
-
-    public static void getTaskByID(HashMap<Integer, Task> allTasks) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите ID задачи. которую необходимо показать");
-        int ID = scanner.nextInt();
-        for (Task k : allTasks.values()) {
-            if (k.getID() == ID) {
-                System.out.println(k.toString());
-            }
-        }
     }
 }
 

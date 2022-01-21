@@ -2,18 +2,88 @@ package controller;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.ArrayList;
 
-public class InMemoryTasksManager implements TaskManager {
-    HashMap<Integer, Task> allTasks = new HashMap<>();
-    HashMap<Integer, Epic> allEpics = new HashMap<>();
-    HashMap<Integer, SubTask> allSubTusk = new HashMap<>();
-    List<Task> historyList = new ArrayList<>();
+    public class InMemoryTasksManager implements TaskManager {
+        private HashMap<Integer, Task> allTasks = new HashMap<>();
+        private HashMap<Integer, Epic> allEpics = new HashMap<>();
+        private HashMap<Integer, SubTask> allSubTusk = new HashMap<>();
+        private List<Task> historyList = new ArrayList<>();
 
+    public void addSubtask(SubTask subTask, HashMap<Integer, SubTask> allSubTusk) {
+        allSubTusk.put(subTask.getID(), subTask);
+    }
+    @Override
+    public void toProgressSubtask(HashMap<Integer, SubTask> allSubtask, HashMap<Integer, Epic> allEpics){
+        Scanner scanner = new Scanner(System.in);
+        Managers.getDefault().showListSubtask(allSubtask);
+        System.out.println("Введите ID подзадачи, которая сейчас выполняется");
+        int ID = scanner.nextInt();
+        for (SubTask k: allSubtask.values()){
+            if(k.getID()==ID){
+                SubTask subTask = new SubTask (k.getID(),k.getName(), k.getDetails(), Status.TO_PROGRESS);
+                addSubtask(subTask,allSubtask);
+                subTask.setEpic(k.getEpic());
+            }
+        }
+        Managers.getDefault().updateStatusEpic(allEpics,allSubtask);
+        Managers.getDefault().showListEpics(allEpics);
+    }
+    @Override
+    public void doneSubtask(HashMap<Integer, SubTask> allSubtask, HashMap<Integer, Epic> allEpics){
+        Scanner scanner = new Scanner(System.in);
+        Managers.getDefault().showListSubtask(allSubtask);
+        System.out.println("Введите ID задачи, выполнение которой завершилось");
+        int ID = scanner.nextInt();
+        for (SubTask k: allSubtask.values()){
+            if(k.getID()==ID){
+                SubTask subTask = new SubTask (k.getID(),k.getName(), k.getDetails(), Status.DONE);
+                addSubtask(subTask,allSubtask);
+                subTask.setEpic(k.getEpic());
+            }
+        }
+        Managers.getDefault().updateStatusEpic(allEpics,allSubtask);
+        Managers.getDefault().showListEpics(allEpics);
+    }
+
+    @Override
+    public void getSubtaskByID(HashMap<Integer, SubTask> allSubtaask, List<Task> historyList){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите ID подзадачи, которую необходимо показать");
+        int ID = scanner.nextInt();
+        for(SubTask k: allSubtaask.values()){
+            if(k.getID()==ID){
+                System.out.println(k.toString());
+                if (historyList.size() < 10) {
+                    historyList.add(historyList.size(), k);
+                } else if (historyList.size()==10){
+                    historyList.remove(0);
+                    historyList.add(historyList.size(), k);
+                }
+            }
+        }
+    }
+    @Override
+    public void updateSubtask(HashMap<Integer, SubTask> allSubtask) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите ID подзадачи, которую необходимо обновить");
+        int ID = scanner.nextInt();
+        for (SubTask k : allSubtask.values()) {
+            if (k.getID() == ID) {
+                System.out.println("Введите название подзадачи");
+                Scanner scan = new Scanner(System.in);
+                String name = scan.nextLine();
+                System.out.println("Введите описание подзадачи ");
+                String details = scan.nextLine();
+                SubTask subTask = new SubTask(ID, name, details, k.getStatus());
+                allSubtask.put(subTask.getID(), subTask);
+                subTask.setEpic(k.getEpic());
+            }
+        }
+    }
 
     @Override
     public void createTask(HashMap<Integer, Task> allTasks) {
@@ -25,7 +95,7 @@ public class InMemoryTasksManager implements TaskManager {
         int numberTask = Task.generateNumberTask(allTasks);
         Status status = Status.NEW;
         Task task = new Task(numberTask, name, details, status);
-        Task.addTasks(task, allTasks);
+        addTasks(task, allTasks);
     }
 
     @Override
@@ -38,7 +108,7 @@ public class InMemoryTasksManager implements TaskManager {
         int numberEpics = Epic.generateNumberEpics(allEpics);
         Status status = Status.NEW;
         Epic epic = new Epic(numberEpics, name, details, status);
-        Epic.addEpics(epic, allEpics);
+        addEpics(epic, allEpics);
     }
 
     @Override
@@ -58,7 +128,7 @@ public class InMemoryTasksManager implements TaskManager {
             int numberSubtask = SubTask.generateNumberSub(allSubTusk);
             Status status = Status.NEW;
             SubTask subTask = new SubTask(numberSubtask, name, details, status);
-            SubTask.addSubtask(subTask, allSubTusk);
+            addSubtask(subTask, allSubTusk);
             allEpics.get(idEpic).getSubtasks().add(subTask.getID());
             subTask.setEpic(idEpic);
         }
@@ -111,11 +181,11 @@ public class InMemoryTasksManager implements TaskManager {
         System.out.println("Если нужна подзадача - введите '3'");
         int numType = sc.nextInt();
         if (numType == 1) {
-            Task.updateTask(allTasks);
+            updateTask(allTasks);
         } else if (numType == 2) {
-            Epic.updateEpic(allEpics);
+            updateEpic(allEpics);
         } else if (numType == 3) {
-            SubTask.updateSubtask(allSubTusk);
+            updateSubtask(allSubTusk);
         }
     }
 
@@ -129,11 +199,11 @@ public class InMemoryTasksManager implements TaskManager {
         System.out.println("Если нужна подзадача - введите '3'");
         int numType = sc.nextInt();
         if (numType == 1) {
-            Task.getTaskByID(allTasks);
+            getTaskByID(allTasks);
         } else if (numType == 2) {
-            Epic.getEpicByID(allEpics,historyList);
+            getEpicByID(allEpics,historyList);
         } else if (numType == 3) {
-            SubTask.getSubtaskByID(allSubTusk,historyList);
+            getSubtaskByID(allSubTusk,historyList);
         }
     }
 
@@ -194,6 +264,105 @@ public class InMemoryTasksManager implements TaskManager {
     public void history(){
         for (Task t: historyList){
             System.out.println(t.toString());
+        }
+    }
+
+    @Override
+    public HashMap<Integer, Task> getAllTasks() {
+        return allTasks;
+    }
+
+    @Override
+    public HashMap<Integer, Epic> getAllEpics() {
+        return allEpics;
+    }
+
+    @Override
+    public HashMap<Integer, SubTask> getAllSubTusk() {
+        return allSubTusk;
+    }
+
+    @Override
+    public List<Task> getHistoryList() {
+        return historyList;
+    }
+
+    @Override
+    public void updateEpic(HashMap<Integer, Epic> allEpic) {
+        Scanner scanner = new Scanner(System.in);
+        Managers.getDefault().showListEpics(allEpic);
+        System.out.println("Введите ID эпика, который необходимо обновить");
+        int ID = scanner.nextInt();
+        for (Epic k : allEpic.values()) {
+            if (k.getID() == ID) {
+                System.out.println("Введите название эпика");
+                Scanner scan = new Scanner(System.in);
+                String name = scan.nextLine();
+                System.out.println("Введите описание эпика ");
+                String details = scan.nextLine();
+                Epic epic = new Epic(ID, name, details, k.getStatus());
+                allEpic.put(epic.getID(), epic);
+                epic.setSubtasks(k.getSubtasks());
+            }
+        }
+    }
+
+    @Override
+    public void addEpics(Epic epic, HashMap<Integer, Epic> allEpics) {
+        allEpics.put(epic.getID(), epic);
+    }
+
+    @Override
+    public void getEpicByID(HashMap<Integer, Epic> allEpics, List<Task> historyList) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите ID эпика, который необходимо показать");
+        int ID = scanner.nextInt();
+        for (Epic k : allEpics.values()) {
+            if (k.getID() == ID) {
+                System.out.println(k.toString());
+                if (historyList.size() < 10) {
+                    historyList.add(historyList.size(), k);
+                } else if (historyList.size() == 10) {
+                    historyList.remove(0);
+                    historyList.add(historyList.size(), k);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void updateTask(HashMap<Integer, Task> allTasks) {
+        Scanner scanner = new Scanner(System.in);
+        Managers.getDefault().showListTasks(allTasks);
+        System.out.println("Введите ID задачи, которую необходимо обновить");
+        int ID = scanner.nextInt();
+        for (Task k : allTasks.values()) {
+            if (k.getID() == ID) {
+                System.out.println("Введите название задачи");
+                Scanner scan = new Scanner(System.in);
+                String name = scan.nextLine();
+                System.out.println("Введите описание задачи ");
+                String details = scan.nextLine();
+                Task task = new Task(ID, name, details, k.getStatus());
+                addTasks(task, allTasks);
+            }
+        }
+    }
+
+    @Override
+    public void addTasks(Task o, HashMap<Integer, Task> allTasks) {
+        allTasks.put(o.getID(), o);
+    }
+
+    @Override
+    public void getTaskByID(HashMap<Integer, Task> allTasks) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите ID задачи. которую необходимо показать");
+        int ID = scanner.nextInt();
+        for (Task k : allTasks.values()) {
+            if (k.getID() == ID) {
+                System.out.println(k.toString());
+            }
         }
     }
 }
