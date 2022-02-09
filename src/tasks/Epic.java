@@ -18,10 +18,6 @@ import java.util.HashMap;
         this.subtasks = subtasks;
     }
 
-    public static int generateNumberEpics(HashMap<Integer, Epic> allEpics) {
-        return allEpics.size() + 1;
-    }
-
         @Override
         public String toString() {
             return "Epic{" +

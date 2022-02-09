@@ -18,10 +18,6 @@ import java.util.HashMap;
         this.epic = epic;
     }
 
-    public static int generateNumberSub(HashMap<Integer, SubTask> allSubTusk) {
-        return allSubTusk.size() + 1;
-    }
-
     @Override
     public String toString() {
         return "SubTask{" +

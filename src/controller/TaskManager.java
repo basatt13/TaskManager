@@ -17,7 +17,7 @@ public interface TaskManager {
 
     void doneSubtask(HashMap<Integer, SubTask> allSubtask, HashMap<Integer, Epic> allEpics);
 
-    void getSubtaskByID(HashMap<Integer, SubTask> allSubtaask, List<Task> historyList);
+    void getSubtaskByID(HashMap<Integer, SubTask> allSubtaask);
 
     void updateSubtask(HashMap<Integer, SubTask> allSubtask);
 
@@ -41,7 +41,7 @@ public interface TaskManager {
     void getAnyByID(HashMap<Integer, Task> allTasks, HashMap<Integer, Epic> allEpics,
                                   HashMap<Integer, SubTask> allSubTusk, List<Task> historyList);
 
-    void removeTaskByID(HashMap<Integer, Task> allTasks);
+    void removeTaskByID();
 
     void removeAllTask(HashMap<Integer, Task> allTasks);
 
@@ -55,7 +55,7 @@ public interface TaskManager {
 
     void addEpics(Epic epic, HashMap<Integer, Epic> allEpics);
 
-    void getEpicByID(HashMap<Integer, Epic> allEpics, List<Task> historyList);
+    void getEpicByID(HashMap<Integer, Epic> allEpics);
 
     void updateTask(HashMap<Integer, Task> allTasks);
 

@@ -61,9 +61,6 @@ public class Task {
         return status;
     }
 
-    public static int generateNumberTask(HashMap<Integer, Task> allTasks) {
-        return allTasks.size() + 1;
-    }
 }
 
 

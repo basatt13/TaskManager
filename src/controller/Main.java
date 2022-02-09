@@ -1,4 +1,6 @@
 package controller;
+import tasks.Task;
+
 import java.util.Scanner;
 
 public class Main {
@@ -43,7 +45,7 @@ public class Main {
             } else if(command==8){
                 manager.getUpdateByID(manager.getAllTasks(), manager.getAllEpics(), manager.getAllSubTusk());
             }else if(command==9){
-                manager.removeTaskByID(manager.getAllTasks());
+                manager.removeTaskByID();
             }else if(command==10){
                 manager.removeAllTask(manager.getAllTasks());
             }else if(command==11){
@@ -52,7 +54,7 @@ public class Main {
                 manager.doneSubtask(manager.getAllSubTusk(),manager.getAllEpics());
             }
             else if(command==13){
-                manager.history();
+             manager.getHistoryList();
             }
         } catch (Exception e){
                 System.out.println("Введите корректное значение");
