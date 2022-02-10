@@ -39,7 +39,7 @@ public interface TaskManager {
                        HashMap<Integer, SubTask> allSubTusk);
 
     void getAnyByID(HashMap<Integer, Task> allTasks, HashMap<Integer, Epic> allEpics,
-                                  HashMap<Integer, SubTask> allSubTusk, List<Task> historyList);
+                                  HashMap<Integer, SubTask> allSubTusk);
 
     void removeTaskByID();
 

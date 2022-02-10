@@ -1,8 +1,8 @@
 package controller;
-
+import tasks.Task;
 import java.util.List;
 
-public interface HistoryManager<Task> {
+public interface HistoryManager {
 
     void add(Task task);
     void remove(int id);

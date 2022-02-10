@@ -1,11 +1,12 @@
 package controller;
-import tasks.Task;
-
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
+        HistoryManagerTest historyManagerTest = new HistoryManagerTest();
+        historyManagerTest.testHistory();
+
         TaskManager manager = Managers.getDefault();
         while (true) {
             try {
@@ -40,8 +41,7 @@ public class Main {
             }else if(command==6){
                 manager.getListSubtasksByEpicID(manager.getAllSubTusk(),manager.getAllEpics());
             }else if(command==7){
-                manager.getAnyByID(manager.getAllTasks(),manager.getAllEpics(),manager.getAllSubTusk(),
-                        manager.getHistoryList());
+                manager.getAnyByID(manager.getAllTasks(),manager.getAllEpics(),manager.getAllSubTusk());
             } else if(command==8){
                 manager.getUpdateByID(manager.getAllTasks(), manager.getAllEpics(), manager.getAllSubTusk());
             }else if(command==9){
@@ -54,7 +54,7 @@ public class Main {
                 manager.doneSubtask(manager.getAllSubTusk(),manager.getAllEpics());
             }
             else if(command==13){
-             manager.getHistoryList();
+                manager.getHistoryList();
             }
         } catch (Exception e){
                 System.out.println("Введите корректное значение");
