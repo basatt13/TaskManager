@@ -1,5 +1,8 @@
 package controller;
-public class NODE <Task>{
+
+import tasks.Task;
+
+public class NODE {
     public Task data;
     public Task next;
     public Task prev;
