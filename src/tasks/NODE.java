@@ -1,4 +1,4 @@
-package controller;
+package tasks;
 
 import tasks.Task;
 

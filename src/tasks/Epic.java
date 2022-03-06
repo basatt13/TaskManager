@@ -1,7 +1,7 @@
 package tasks;
 import controller.Status;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 
     public class Epic extends Task {
         protected ArrayList<Integer> subtasks = new ArrayList<>();
@@ -20,8 +20,8 @@ import java.util.HashMap;
 
         @Override
         public String toString() {
-            return "Epic{" +
-                    "} " + super.toString();
+
+        return getID() +","+ Tasks.EPIC +","+ getName()+","+ getStatus() + ","+getDetails();
         }
 }
 

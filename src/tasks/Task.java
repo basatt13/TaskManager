@@ -1,6 +1,6 @@
 package tasks;
 import controller.Status;
-import java.util.HashMap;
+
 import java.util.Objects;
 
 
@@ -19,12 +19,8 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Задача{" +
-                "ID=" + ID +
-                ", name='" + name + '\'' +
-                ", details='" + details + '\'' +
-                ", status='" + status + '\'' +
-                '}';
+
+        return ID +"," + Tasks.TASK +","+ name + ","+ status + ","+details;
     }
 
     @Override

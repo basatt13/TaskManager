@@ -1,9 +1,8 @@
 package tasks;
 import controller.Status;
-import java.util.HashMap;
 
 
-    public class SubTask extends Task {
+public class SubTask extends Task {
         protected int epic;
 
         public SubTask(int ID, String name, String details, Status status) {
@@ -20,9 +19,7 @@ import java.util.HashMap;
 
     @Override
     public String toString() {
-        return "SubTask{" +
-                "epic=" + epic +
-                "} " + super.toString();
+        return getID() +","+ Tasks.SUBTASK +","+getName()+","+ getStatus() + ","+getDetails()+","+ epic;
     }
 }
 

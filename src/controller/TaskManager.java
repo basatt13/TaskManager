@@ -1,65 +1,58 @@
 package controller;
+import data.Tables;
 import tasks.Epic;
-import tasks.SubTask;
 import tasks.Task;
-import java.util.HashMap;
-import java.util.List;
+import java.io.IOException;
 
 public interface TaskManager {
 
-    HashMap<Integer, Task> getAllTasks();
+    void doneSubtask() throws IOException;
 
-    HashMap<Integer, Epic> getAllEpics();
+    int generateNumberTask();
 
-    HashMap<Integer, SubTask> getAllSubTusk();
+    void getSubtaskByID() throws IOException;
 
-    List<Task> getHistoryList();
+    void updateSubtask() throws IOException;
 
-    void doneSubtask(HashMap<Integer, SubTask> allSubtask, HashMap<Integer, Epic> allEpics);
+    void createTask() throws IOException;
 
-    void getSubtaskByID(HashMap<Integer, SubTask> allSubtaask);
+    void createEpic () throws IOException;
 
-    void updateSubtask(HashMap<Integer, SubTask> allSubtask);
+    void createSubtask() throws IOException;
 
-    void createTask(HashMap<Integer, Task> allTasks);
+    void showListTasks();
 
-    void createEpic (HashMap<Integer, Epic> allEpics);
+    void showListEpics();
 
-    void createSubtask(HashMap<Integer, SubTask> allSubTusk, HashMap<Integer, Epic> allEpics);
+    void showListSubtask();
 
-    void showListTasks(HashMap<Integer, Task> allTasks);
+    void getListSubtasksByEpicID();
 
-    void showListEpics(HashMap<Integer, Epic> allEpics);
+    void getUpdateByID() throws IOException;
 
-    void showListSubtask(HashMap<Integer, SubTask> allSubTusk);
-
-    void getListSubtasksByEpicID(HashMap<Integer, SubTask> allSubTusk, HashMap<Integer, Epic> allEpics);
-
-    void getUpdateByID(HashMap<Integer, Task> allTasks, HashMap<Integer, Epic> allEpics,
-                       HashMap<Integer, SubTask> allSubTusk);
-
-    void getAnyByID(HashMap<Integer, Task> allTasks, HashMap<Integer, Epic> allEpics,
-                                  HashMap<Integer, SubTask> allSubTusk);
+    void getAnyByID() throws IOException;
 
     void removeTaskByID();
 
-    void removeAllTask(HashMap<Integer, Task> allTasks);
+    void removeAllTask();
 
-    void updateStatusEpic(HashMap<Integer, Epic> allEpics, HashMap<Integer, SubTask> allSubTusk);
+    void updateStatusEpic();
+    
+    void toProgressSubtask() throws IOException;
 
-    void history();
+    void updateEpic() throws IOException;
 
-    void toProgressSubtask(HashMap<Integer, SubTask> allSubtask, HashMap<Integer, Epic> allEpics);
+    void addEpics(Epic epic) throws IOException;
 
-    void updateEpic(HashMap<Integer, Epic> allEpic);
+    void getEpicByID() throws IOException;
 
-    void addEpics(Epic epic, HashMap<Integer, Epic> allEpics);
+    void updateTask() throws IOException;
 
-    void getEpicByID(HashMap<Integer, Epic> allEpics);
+    void addTasks(Task o) throws IOException;
 
-    void updateTask(HashMap<Integer, Task> allTasks);
+    void getTaskByID() throws IOException;
 
-    void addTasks(Task o, HashMap<Integer, Task> allTasks);
 
-    void getTaskByID(HashMap<Integer, Task> allTasks);
+
+
 }
