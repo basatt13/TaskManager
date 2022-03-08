@@ -88,7 +88,7 @@ public class InMemoryTasksManager extends Tables implements TaskManager {
     }
 
     @Override
-    public void createTask() throws IOException {
+    public void createTask()  {
         System.out.println("Введите название задачи");
         Scanner scan = new Scanner(System.in);
         String name = scan.nextLine();
@@ -97,12 +97,16 @@ public class InMemoryTasksManager extends Tables implements TaskManager {
         int numberTask = generateNumberTask();
         Status status1 = Status.NEW;
         Task task = new Task(numberTask, name, details, status1);
-        addTasks(task);
+        try {
+            addTasks(task);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Tables.forGenerateID.add(numberTask);
     }
 
     @Override
-    public void createEpic() throws IOException {
+    public void createEpic() {
         System.out.println("Введите название эпика");
         Scanner scan = new Scanner(System.in);
         String name = scan.nextLine();
@@ -111,14 +115,16 @@ public class InMemoryTasksManager extends Tables implements TaskManager {
         int numberEpics = generateNumberTask();
         Status status = Status.NEW;
         Epic epic = new Epic(numberEpics, name, details, status);
-        addEpics(epic);
+        try {
+            addEpics(epic);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Tables.forGenerateID.add(numberEpics);
     }
 
     @Override
-    public void createSubtask
-            ()
-            throws IOException {
+    public void createSubtask() {
         Scanner scanner = new Scanner(System.in);
         if (Tables.allEpics.isEmpty()) {
             System.out.println("Сначала создайте эпик");
@@ -134,7 +140,11 @@ public class InMemoryTasksManager extends Tables implements TaskManager {
             int numberSubtask = generateNumberTask();
             Status status = Status.NEW;
             SubTask subTask = new SubTask(numberSubtask, name, details, status);
-            addSubtask(subTask);
+            try {
+                addSubtask(subTask);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             Tables.allEpics.get(idEpic).getSubtasks().add(subTask.getID());
             subTask.setEpic(idEpic);
             Tables.forGenerateID.add(numberSubtask);

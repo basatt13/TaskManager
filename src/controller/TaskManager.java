@@ -14,11 +14,11 @@ public interface TaskManager {
 
     void updateSubtask() throws IOException;
 
-    void createTask() throws IOException;
+    void createTask();
 
-    void createEpic () throws IOException;
+    void createEpic () ;
 
-    void createSubtask() throws IOException;
+    void createSubtask();
 
     void showListTasks();
 

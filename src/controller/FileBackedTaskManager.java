@@ -3,6 +3,8 @@ import data.Tables;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
+import tasks.Tasks;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -10,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FileBackedTaskManager extends InMemoryTasksManager implements TaskManager {
+public class FileBackedTaskManager extends InMemoryTasksManager {
     private String file;
 
     FileBackedTaskManager(String file){
@@ -19,18 +21,7 @@ public class FileBackedTaskManager extends InMemoryTasksManager implements TaskM
     }
 
     public static void main(String[] args) throws IOException {
-        FileBackedTaskManager fileBackedTaskManager = loadFromFile(createFileForSave());
-        fileBackedTaskManager.createTask();
-        fileBackedTaskManager.createTask();
-        fileBackedTaskManager.createEpic();
-        fileBackedTaskManager.createEpic();
-        fileBackedTaskManager.createSubtask();
-        fileBackedTaskManager.createSubtask();
-        fileBackedTaskManager.getTaskByID();
-        fileBackedTaskManager.getTaskByID();
-        fileBackedTaskManager.getTaskByID();
-        fileBackedTaskManager.getEpicByID();
-        fileBackedTaskManager.removeTaskByID();
+        ForTest.test();
     }
 
     void save() {
@@ -94,22 +85,22 @@ public class FileBackedTaskManager extends InMemoryTasksManager implements TaskM
         }
     }
 
-
+// создание файла для загрузки информации
     public static File createFileForSave() throws IOException {
         if (Files.exists(Paths.get
-                ("C:\\Users\\1\\OneDrive\\Рабочий стол\\Языки программирования\\копия спринт 2\\java-sprint2-hw\\src","autoSave.csv"))) {
+                (".\\autoSave.csv"))) {
             System.out.println("Файл с указанным именем уже существует");
-            File file = new File("C:\\Users\\1\\OneDrive\\Рабочий стол\\Языки программирования\\копия спринт 2\\java-sprint2-hw\\src", "autoSave.csv");
+            File file = new File(".\\autoSave.csv");
             return file;
         } else {
             Files.createFile
-                    (Paths.get("C:\\Users\\1\\OneDrive\\Рабочий стол\\Языки программирования\\копия спринт 2\\java-sprint2-hw\\src", "autoSave.csv"));
+                    (Paths.get(".\\autoSave.csv"));
             String header = "id,type,name,status,description,epic\n";
             Writer wr = new FileWriter("autoSave.csv", true);
             wr.write(header);
             wr.close();
             System.out.println("Файл создан");
-            File file = new File("C:\\Users\\1\\OneDrive\\Рабочий стол\\Языки программирования\\копия спринт 2\\java-sprint2-hw\\src", "autoSave.csv");
+            File file = new File(".\\autoSave.csv");
             return file;
         }
     }
@@ -129,13 +120,13 @@ public class FileBackedTaskManager extends InMemoryTasksManager implements TaskM
 
         for (int i = 1; i < fromFiledata.size(); ++i) {
             if(!fromFiledata.get(i).isEmpty()) {
-                if (fromFiledata.get(i).split(",")[1].equals("TASK")) {
+                if (fromFiledata.get(i).split(",")[1].equals(String.valueOf(Tasks.TASK))) {
                     fileBackedTaskManager.addTasks(fromString(fromFiledata.get(i)));
                     Tables.forGenerateID.add(fromString(fromFiledata.get(i)).getID());
-                } else if (fromFiledata.get(i).split(",")[1].equals("EPIC")) {
+                } else if (fromFiledata.get(i).split(",")[1].equals(String.valueOf(Tasks.EPIC))) {
                     fileBackedTaskManager.addEpics((Epic) fromString(fromFiledata.get(i)));
                     Tables.forGenerateID.add(fromString(fromFiledata.get(i)).getID());
-                } else if (fromFiledata.get(i).split(",")[1].equals("SUBTASK")) {
+                } else if (fromFiledata.get(i).split(",")[1].equals(String.valueOf(Tasks.SUBTASK))) {
                     fileBackedTaskManager.addSubtask((SubTask) fromString(fromFiledata.get(i)));
                     Tables.forGenerateID.add(fromString(fromFiledata.get(i)).getID());
                     Tables.allEpics.get(Integer.parseInt(fromFiledata.get(i).split(",")[5])).getSubtasks().add(fromString(fromFiledata.get(i)).getID());
@@ -160,13 +151,13 @@ public class FileBackedTaskManager extends InMemoryTasksManager implements TaskM
 
     public static Task fromString(String value) {
         String a[] = value.split(",");
-        if ((a[1]).equals("TASK")) {
+        if ((a[1]).equals(String.valueOf(Tasks.TASK))) {
             Task task = new Task(Integer.parseInt(a[0]), a[2], a[4], Status.valueOf(a[3]));
             return task;
-        } else if ((a[1]).equals("EPIC")) {
+        } else if ((a[1]).equals(String.valueOf(Tasks.EPIC))) {
             Epic epic = new Epic(Integer.parseInt(a[0]), a[2], a[4], Status.valueOf(a[3]));
             return epic;
-        } else if ((a[1]).equals("SUBTASK")) {
+        } else if ((a[1]).equals(String.valueOf(Tasks.SUBTASK))) {
             SubTask subTask = new SubTask(Integer.parseInt(a[0]), a[2], a[4], Status.valueOf(a[3]));
             return subTask;
         }
@@ -197,28 +188,20 @@ public class FileBackedTaskManager extends InMemoryTasksManager implements TaskM
 
 
     @Override
-    public void createTask() throws IOException {
-            super.createTask();
+    public void createTask()  {
+        super.createTask();
     }
 
 
     @Override
     public void createEpic() {
-        try {
-            super.createEpic();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        super.createEpic();
     }
 
 
     @Override
     public void createSubtask() {
-        try {
-            super.createSubtask();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        super.createSubtask();
     }
 
 
