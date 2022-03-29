@@ -13,65 +13,55 @@ public class ForTest extends FileBackedTaskManager{
     }
 
     public static void test() throws IOException {
-        FileBackedTaskManager test = FileBackedTaskManager.loadFromFile(createFileForSave());
+
         ForTest forTest = new ForTest("autoSave.csv");
-        forTest.createTask();
-        forTest.createTask();
-        forTest.createEpic();
-        forTest.createEpic();
-        forTest.createSubtask();
-        forTest.createSubtask();
-        forTest.getTaskByID();
-        forTest.getEpicByID();
-        forTest.getSubtaskByID();
-        forTest.getTaskByID();
+        forTest.loadFromFile(createFileForSave());
+        Task task = new Task(forTest.generateNumberTask(), "задача " + forTest.generateNumberTask()
+                ,"описание",Status.NEW,"12.12.22, 01:00",20);
+        Epic epic = new Epic(forTest.generateNumberTask(), "эпик " + forTest.generateNumberTask()
+                ,"описание",Status.NEW,null,0);
+        SubTask subTask = new SubTask(forTest.generateNumberTask(), "подзадача " + forTest.generateNumberTask()
+                ,"описание",Status.NEW,"13.12.22, 01:00",20);
+        forTest.createTask(task);
+        forTest.createTask(task);
+        forTest.createEpic(epic);
+        forTest.createEpic(epic);
+        forTest.createSubtask(subTask,3);
+        forTest.createSubtask(subTask,3);
+        forTest.getTaskByID(1);
+        forTest.getEpicByID(2);
+        forTest.getSubtaskByID(3);
+        forTest.getTaskByID(1);
+
     }
 
+
     @Override
-    public void createTask(){
-        int numberTask = generateNumberTask();
-        String name = "задача " + numberTask;
-        String details = "описание задачи " + numberTask;
-        Status status1 = Status.NEW;
-        Task task = new Task(numberTask, name, details, status1);
+    public void createTask(Task task){
         try {
             addTasks(task);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Tables.forGenerateID.add(numberTask);
+        Tables.forGenerateID.add(task.getID());
     }
 
     @Override
-    public void createEpic() {
-        int numberEpics = generateNumberTask();
-        String name = "эпик " + numberEpics;
-        String details = "описание эпика " + numberEpics;
-        Status status = Status.NEW;
-        Epic epic = new Epic(numberEpics, name, details, status);
+    public void createEpic(Epic epic) {
         try {
             addEpics(epic);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Tables.forGenerateID.add(numberEpics);
+        Tables.forGenerateID.add(epic.getID());
     }
 
     @Override
-    public void createSubtask()  {
+    public void createSubtask(SubTask subTask, int idEpic)  {
         Scanner scanner = new Scanner(System.in);
         if (Tables.allEpics.isEmpty()) {
             System.out.println("Сначала создайте эпик");
-            createEpic();
         } else {
-            showListEpics();
-            System.out.println("Введите номер эпика для которого создается подзадача");
-            int idEpic = scanner.nextInt();
-            int numberSubtask = generateNumberTask();
-            String name = "подзадача " + numberSubtask;
-            String details = "описание подзадачи " + numberSubtask;
-            Status status = Status.NEW;
-            SubTask subTask = new SubTask(numberSubtask, name, details, status);
             try {
                 addSubtask(subTask);
             } catch (IOException e) {
@@ -79,7 +69,7 @@ public class ForTest extends FileBackedTaskManager{
             }
             Tables.allEpics.get(idEpic).getSubtasks().add(subTask.getID());
             subTask.setEpic(idEpic);
-            Tables.forGenerateID.add(numberSubtask);
+            Tables.forGenerateID.add(subTask.getID());
         }
     }
 }

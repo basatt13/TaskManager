@@ -21,8 +21,8 @@ public class InMemoryHistoryManager extends Tables implements HistoryManager {
     }
 
 
-    @Override
-    public List<Task> getHistory() {
+
+    List<Task> getHistory() {
         for(int i=0; i < Tables.tasksHis.size(); i++){
             if(Tables.taskHistory.contains(Tables.tasksHis.get(i).data)) {
                 Tables.taskHistory.remove(Tables.tasksHis.get(i).data);
@@ -50,8 +50,10 @@ public class InMemoryHistoryManager extends Tables implements HistoryManager {
                         null));
             } else {
                  Tables.tasksHis.add(node);
-                 Tables.tasksHis.set( Tables.tasksHis.size()-1, new NODE(task, null, Tables.tasksHis.get( Tables.tasksHis.size()-2).data));
-                 Tables.tasksHis.set( Tables.tasksHis.size()-2, new NODE( Tables.tasksHis.get( Tables.tasksHis.size()-2).data,task,
+                 Tables.tasksHis.set( Tables.tasksHis.size()-1,
+                         new NODE(task, null, Tables.tasksHis.get( Tables.tasksHis.size()-2).data));
+                 Tables.tasksHis.set( Tables.tasksHis.size()-2,
+                         new NODE( Tables.tasksHis.get( Tables.tasksHis.size()-2).data,task,
                          Tables.tasksHis.get( Tables.tasksHis.size()-3).data));
 
             }
@@ -69,7 +71,8 @@ public class InMemoryHistoryManager extends Tables implements HistoryManager {
             } else {
                  Tables.tasksHis.set( Tables.tasksHis.size()-1, new NODE(node.data,null,
                          Tables.tasksHis.get( Tables.tasksHis.size()-2).data));
-                 Tables.tasksHis.set(tasksHis.size()-2, new NODE( Tables.tasksHis.get( Tables.tasksHis.size()-2).data,node.data,
+                 Tables.tasksHis.set(tasksHis.size()-2, new NODE( Tables.tasksHis.get( Tables.tasksHis.size()-2).data
+                         ,node.data,
                          Tables.tasksHis.get( Tables.tasksHis.size()-3).data));
             }
             for (int i = 0; i <tasksHis.size(); i++){
@@ -78,7 +81,8 @@ public class InMemoryHistoryManager extends Tables implements HistoryManager {
         }
     }
 
-    void removeNode(NODE node){
+    @Override
+    public void removeNode(NODE node){
         int i = Tables.deleteData.get(node.data.getID());
         if(Tables.tasksHis.size()==1) {
             Tables.tasksHis.remove(i);
@@ -95,19 +99,24 @@ public class InMemoryHistoryManager extends Tables implements HistoryManager {
         } else {
             if(i<=1) {
                 Tables.tasksHis.remove(i);
-                Tables.tasksHis.set(1, new NODE(Tables.tasksHis.get(1).data, Tables.tasksHis.get(2).data, Tables.tasksHis.get(0).data));
+                Tables.tasksHis.set(1, new NODE(Tables.tasksHis.get(1).data, Tables.tasksHis.get(2).data
+                        , Tables.tasksHis.get(0).data));
                 Tables.tasksHis.set(0, new NODE(Tables.tasksHis.get(0).data, Tables.tasksHis.get(1).data, null));
                 addDeleteData();
             }else{
                 if(i<=Tables.tasksHis.size()-2){
                     Tables.tasksHis.remove(i);
-                    Tables.tasksHis.set(i - 1, new NODE(Tables.tasksHis.get(i - 1).data, Tables.tasksHis.get(i).data, Tables.tasksHis.get(i-2).data));
-                    Tables.tasksHis.set(i,new NODE(Tables.tasksHis.get(i).data,null,Tables.tasksHis.get(i - 1).data));
+                    Tables.tasksHis.set(i - 1, new NODE(Tables.tasksHis.get(i - 1).data, Tables.tasksHis.get(i).data
+                            , Tables.tasksHis.get(i-2).data));
+                    Tables.tasksHis.set(i,new NODE(Tables.tasksHis.get(i).data,Tables.tasksHis.get(i + 1).data
+                            ,Tables.tasksHis.get(i - 1).data));
                     addDeleteData();
                 } else if(i==tasksHis.size()-1){
                     Tables.tasksHis.remove(i);
-                    Tables.tasksHis.set(i-1, new NODE(Tables.tasksHis.get(i-1).data, Tables.tasksHis.get(i-2).data, null));
-                    Tables.tasksHis.set(i-2,new NODE(Tables.tasksHis.get(i-2).data,Tables.tasksHis.get(i-1).data,Tables.tasksHis.get(i - 3).data));
+                    Tables.tasksHis.set(i-1, new NODE(Tables.tasksHis.get(i-1).data,null
+                            , Tables.tasksHis.get(i-2).data));
+                    Tables.tasksHis.set(i-2,new NODE(Tables.tasksHis.get(i-2).data,Tables.tasksHis.get(i-1).data
+                            ,Tables.tasksHis.get(i - 3).data));
                     addDeleteData();
                 }
             }

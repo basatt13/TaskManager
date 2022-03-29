@@ -3,6 +3,8 @@ import data.Tables;
 import tasks.Epic;
 import tasks.SubTask;
 import tasks.Task;
+import tasks.Tasks;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -11,135 +13,53 @@ public class InMemoryTasksManager extends Tables implements TaskManager {
 
     InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
 
-    public void addSubtask(SubTask subTask) throws IOException {
-        Tables.allSubTusk.put(subTask.getID(), subTask);
-    }
-
     @Override
     public int generateNumberTask() {
-        return Tables.forGenerateID.size()+1;
+        return Tables.forGenerateID.size() + 1;
     }
 
     @Override
-    public void toProgressSubtask() throws IOException {
-            Scanner scanner = new Scanner(System.in);
-            showListSubtask();
-            System.out.println("Введите ID подзадачи, которая сейчас выполняется");
-            int ID = scanner.nextInt();
-            for (SubTask k : Tables.allSubTusk.values()) {
-                if (k.getID() == ID) {
-                    SubTask subTask = new SubTask(k.getID(), k.getName(), k.getDetails(), Status.TO_PROGRESS);
-                    addSubtask(subTask);
-                    subTask.setEpic(k.getEpic());
-                }
-            }
-            updateStatusEpic();
-            showListEpics();
+    public void createTask(Task task) {
+        if(!task.validateTime()){
+            System.out.println("Задача с указанным временем существует!");
+            System.out.println("Выбирите другое время для выполнения задачи");
+            return;
         }
-
-
-    @Override
-    public void doneSubtask() throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        showListSubtask();
-        System.out.println("Введите ID задачи, выполнение которой завершилось");
-        int ID = scanner.nextInt();
-        for (SubTask k : Tables.allSubTusk.values()) {
-            if (k.getID() == ID) {
-                SubTask subTask = new SubTask(k.getID(), k.getName(), k.getDetails(), Status.DONE);
-                addSubtask(subTask);
-                subTask.setEpic(k.getEpic());
-            }
-        }
-        updateStatusEpic();
-        showListEpics();
-    }
-
-    @Override
-    public void getSubtaskByID() throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите ID подзадачи, которую необходимо показать");
-        int ID = scanner.nextInt();
-        for (SubTask k : Tables.allSubTusk.values()) {
-            if (k.getID() == ID) {
-                System.out.println(k.toString());
-                historyManager.add(k);
-            }
-        }
-    }
-
-    @Override
-    public void updateSubtask() throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите ID подзадачи, которую необходимо обновить");
-        int ID = scanner.nextInt();
-        for (SubTask k : Tables.allSubTusk.values()) {
-            if (k.getID() == ID) {
-                System.out.println("Введите название подзадачи");
-                Scanner scan = new Scanner(System.in);
-                String name = scan.nextLine();
-                System.out.println("Введите описание подзадачи ");
-                String details = scan.nextLine();
-                SubTask subTask = new SubTask(ID, name, details, k.getStatus());
-                Tables.allSubTusk.put(subTask.getID(), subTask);
-                subTask.setEpic(k.getEpic());
-            }
-        }
-    }
-
-    @Override
-    public void createTask()  {
-        System.out.println("Введите название задачи");
-        Scanner scan = new Scanner(System.in);
-        String name = scan.nextLine();
-        System.out.println("Введите описание задачи ");
-        String details = scan.nextLine();
-        int numberTask = generateNumberTask();
-        Status status1 = Status.NEW;
-        Task task = new Task(numberTask, name, details, status1);
         try {
             addTasks(task);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Tables.forGenerateID.add(numberTask);
+        Tables.forGenerateID.add(task.getID());
     }
 
     @Override
-    public void createEpic() {
-        System.out.println("Введите название эпика");
-        Scanner scan = new Scanner(System.in);
-        String name = scan.nextLine();
-        System.out.println("Введите описание задачи ");
-        String details = scan.nextLine();
-        int numberEpics = generateNumberTask();
-        Status status = Status.NEW;
-        Epic epic = new Epic(numberEpics, name, details, status);
+    public void createEpic(Epic epic) {
+        if(!epic.validateTime()){
+            System.out.println("Задача с указанным временем существует!");
+            System.out.println("Выбирите другое время для выполнения задачи");
+            return;
+        }else{
+            System.out.println("Время свободно");
+        }
         try {
             addEpics(epic);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Tables.forGenerateID.add(numberEpics);
+        Tables.forGenerateID.add(epic.getID());
     }
 
     @Override
-    public void createSubtask() {
-        Scanner scanner = new Scanner(System.in);
+    public void createSubtask(SubTask subTask, int idEpic) {
+        if(!subTask.validateTime()){
+            System.out.println("Задача с указанным временем существует!");
+            System.out.println("Выбирите другое время для выполнения задачи");
+            return;
+        }
         if (Tables.allEpics.isEmpty()) {
             System.out.println("Сначала создайте эпик");
         } else {
-            showListEpics();
-            System.out.println("Введите номер эпика для которого создается подзадача");
-            int idEpic = scanner.nextInt();
-            Scanner sc = new Scanner(System.in);
-            System.out.println("Введите название подзадачи ");
-            String name = sc.nextLine();
-            System.out.println("Введите описание подзадачи ");
-            String details = sc.nextLine();
-            int numberSubtask = generateNumberTask();
-            Status status = Status.NEW;
-            SubTask subTask = new SubTask(numberSubtask, name, details, status);
             try {
                 addSubtask(subTask);
             } catch (IOException e) {
@@ -147,95 +67,148 @@ public class InMemoryTasksManager extends Tables implements TaskManager {
             }
             Tables.allEpics.get(idEpic).getSubtasks().add(subTask.getID());
             subTask.setEpic(idEpic);
-            Tables.forGenerateID.add(numberSubtask);
+            Tables.forGenerateID.add(subTask.getID());
         }
     }
 
     @Override
-    public void showListTasks() {
-        System.out.println("Список всех задач");
-        for (Task task : Tables.allTasks.values()) {
-            System.out.println(task.toString());
-        }
+    public void addTasks(Task o) throws IOException {
+        Tables.allTasks.put(o.getID(), o);
     }
 
     @Override
-    public void showListEpics() {
-        System.out.println("Список всех эпиков'");
-        for (Epic epic : Tables.allEpics.values()) {
-            System.out.println(epic.toString());
-        }
+    public void addEpics(Epic epic) throws IOException {
+        Tables.allEpics.put(epic.getID(), epic);
     }
 
     @Override
-    public void showListSubtask() {
-        System.out.println("Список всех подзадач'");
-        for (int epic : Tables.allSubTusk.keySet()) {
-            System.out.println(Tables.allSubTusk.get(epic).toString());
-        }
+    public void addSubtask(SubTask subTask) throws IOException {
+        Tables.allSubTusk.put(subTask.getID(), subTask);
     }
 
     @Override
-    public void getListSubtasksByEpicID() {
-        Scanner sc = new Scanner(System.in);
-        showListEpics();
-        System.out.println("Введите номер эпика для которого нужно получить список всех подзадач");
-        int idEpic = sc.nextInt();
-        for (SubTask k : Tables.allSubTusk.values()) {
-            if (k.getEpic() == idEpic) {
-                System.out.println(k.toString());
+    public List<Task> showListTasks() {
+        List<Task> tasks = new ArrayList<>();
+        if (!Tables.allTasks.isEmpty()) {
+            System.out.println("Список всех задач");
+            for (Task task : Tables.allTasks.values()) {
+                System.out.println(task.toString());
+                tasks.add(task);
             }
+            return tasks;
+        } else {
+            return null;
         }
     }
 
     @Override
-    public void getUpdateByID()
-            throws IOException {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Выбирите типа задачи который необходи обновить");
-        System.out.println("Если нужна задача - введите '1'");
-        System.out.println("Если нужен эпик - введите '2'");
-        System.out.println("Если нужна подзадача - введите '3'");
-        int numType = sc.nextInt();
-        if (numType == 1) {
-            updateTask();
-        } else if (numType == 2) {
-            updateEpic();
-        } else if (numType == 3) {
-            updateSubtask();
+    public List<Epic> showListEpics() {
+        List<Epic> epics = new ArrayList<>();
+        if (!Tables.allEpics.isEmpty()) {
+            System.out.println("Список всех задач");
+            for (Epic epic : Tables.allEpics.values()) {
+                System.out.println(epic.toString());
+                epics.add(epic);
+            }
+            return epics;
+        } else {
+            return null;
         }
     }
 
     @Override
-    public void getAnyByID() throws IOException {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Выбирите типа задачи который необходи показать");
-        System.out.println("Если нужна задача - введите '1'");
-        System.out.println("Если нужен эпик - введите '2'");
-        System.out.println("Если нужна подзадача - введите '3'");
-        int numType = sc.nextInt();
-        if (numType == 1) {
-            getTaskByID();
-        } else if (numType == 2) {
-            getEpicByID();
-        } else if (numType == 3) {
-            getSubtaskByID();
+    public List<SubTask> showListSubtask() {
+        List<SubTask> epics = new ArrayList<>();
+        if (!Tables.allEpics.isEmpty()) {
+            System.out.println("Список всех задач");
+            for (SubTask subTask : Tables.allSubTusk.values()) {
+                System.out.println(subTask.toString());
+                epics.add(subTask);
+            }
+            return epics;
+        } else {
+            return null;
         }
     }
 
     @Override
-    public void removeTaskByID() {
-        Scanner scanner = new Scanner(System.in);
-        showListTasks();
-        showListEpics();
-        showListSubtask();
-        System.out.println("Введите ID задачи, которую необходимо удалить");
-        int ID = scanner.nextInt();
-        if (Tables.allTasks.containsKey(ID)) {
-            Tables.allTasks.remove(ID);
-        } else if (Tables.allEpics.containsKey(ID)) {
+    public List<SubTask> getListSubtasksByEpicID(int numEpic) {
+        List<SubTask> subTaskList = new ArrayList<>();
+        if (!Tables.allSubTusk.isEmpty()) {
+            for (SubTask k : Tables.allSubTusk.values()) {
+                if (k.getEpic() == numEpic) {
+                    System.out.println(k.toString());
+                    subTaskList.add(k);
+                }
+            }
+            if (subTaskList.isEmpty()) {
+                return null;
+            } else {
+                return subTaskList;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public Task getAnyByID(Tasks tasks, int numOfTask) {
+        if (tasks.equals(Tasks.TASK)) {
+            return getTaskByID(numOfTask);
+        } else if (tasks.equals(Tasks.EPIC)) {
+            return   getEpicByID(numOfTask);
+        } else if (tasks.equals(Tasks.SUBTASK)) {
+            return getSubtaskByID(numOfTask);
+        }
+        return null;
+    }
+
+    @Override
+    public Task getTaskByID(int ID) {
+        if (Tables.allTasks.isEmpty() || !Tables.allTasks.containsKey(ID)) {
+            return null;
+        } else {
+            System.out.println(Tables.allTasks.get(ID).toString());
+            historyManager.add(Tables.allTasks.get(ID));
+            return Tables.allTasks.get(ID);
+        }
+    }
+
+    @Override
+    public Epic getEpicByID(int ID){
+        if (Tables.allEpics.isEmpty() || !Tables.allEpics.containsKey(ID)) {
+            return null;
+        } else {
+            System.out.println(Tables.allEpics.get(ID).toString());
+            historyManager.add(Tables.allEpics.get(ID));
+            return Tables.allEpics.get(ID);
+        }
+    }
+
+    @Override
+    public SubTask getSubtaskByID(int ID) {
+        if (Tables.allSubTusk.isEmpty() || !Tables.allSubTusk.containsKey(ID)) {
+            return null;
+        } else {
+            System.out.println(Tables.allSubTusk.get(ID).toString());
+            historyManager.add(Tables.allSubTusk.get(ID));
+            return Tables.allSubTusk.get(ID);
+        }
+    }
+
+    @Override
+    public String removeTaskByID(int numTask) {
+        String text;
+        if (!Tables.allTasks.isEmpty() && Tables.allTasks.containsKey(numTask)) {
+            Tables.allTasks.remove(numTask);
+            if(Tables.deleteData.containsKey(numTask)) {
+                historyManager.removeNode(Tables.tasksHis.get(Tables.deleteData.get(numTask)));
+            }
+            text = "Задача удалена";
+            return text;
+        } else if (!Tables.allEpics.isEmpty() && Tables.allEpics.containsKey(numTask)) {
             for (Epic k : Tables.allEpics.values()) {
-                if (k.getID() == ID) {
+                if (k.getID() == numTask) {
                     for (int l : k.getSubtasks()) {
                         if (Tables.deleteData.containsKey(l)) {
                             Tables.allSubTusk.remove(l);
@@ -245,20 +218,73 @@ public class InMemoryTasksManager extends Tables implements TaskManager {
                     }
                 }
             }
-            Tables.allEpics.remove(ID);
-        } else if (Tables.allSubTusk.containsKey(ID)) {
-            for (SubTask sub : Tables.allSubTusk.values()) {
-                if (sub.getID() == ID) {
-                    Tables.allSubTusk.remove(ID);
-                }
+            Tables.allEpics.remove(numTask);
+            text = "Эпик удален";
+            if(Tables.deleteData.containsKey(numTask)) {
+                historyManager.removeNode(Tables.tasksHis.get(Tables.deleteData.get(numTask)));
             }
+            return text;
+        } else if (!Tables.allEpics.isEmpty() && Tables.allSubTusk.containsKey(numTask)) {
+            for (SubTask sub : Tables.allSubTusk.values()) {
+                if (sub.getID() == numTask) {
+                    Tables.allSubTusk.remove(numTask);
+                }
+            } if(Tables.deleteData.containsKey(numTask)) {
+                historyManager.removeNode(Tables.tasksHis.get(Tables.deleteData.get(numTask)));
+            }
+            text = "Подзадача удалена";
+            return text;
+        }else {
+            text = "Задача с указанным ID не найдена";
+            if(Tables.deleteData.containsKey(numTask)) {
+                historyManager.removeNode(Tables.tasksHis.get(Tables.deleteData.get(numTask)));
+            }
+            return text;
         }
-        historyManager.removeNode(Tables.tasksHis.get(Tables.deleteData.get(ID)));
+
     }
 
     @Override
     public void removeAllTask() {
         Tables.allTasks.clear();
+        Tables.allEpics.clear();
+        Tables.allSubTusk.clear();
+    }
+
+    @Override
+    public String updateTask(Task task) {
+        task.validateTime();
+        String text;
+        if (Tables.allTasks.containsKey(task.getID())) {
+            Task oldTask = Tables.allTasks.get(task.getID());
+            Tables.allTasks.put(task.getID(), task);
+            text = "Задача обновлена";
+            return text;
+        }else if(Tables.allTasks.isEmpty()){
+            text = "Список задач пуст";
+            return text;
+        }else {
+            text = "Задача с указанным ID не найдена";
+            return text;
+        }
+    }
+
+    @Override
+    public String updateEpic(Epic epic) {
+        String text;
+        if (Tables.allEpics.containsKey(epic.getID())) {
+            Epic oldEpic = Tables.allEpics.get(epic.getID());
+            Tables.allEpics.put(epic.getID(), epic);
+            epic.setSubtasks(oldEpic.getSubtasks());
+            text = "Эпик обновлен";
+            return text;
+        }else if(Tables.allEpics.isEmpty()){
+            text = "Список эпиков пуст";
+            return text;
+        }else {
+            text = "Эпик с указанным ID не найден";
+            return text;
+        }
     }
 
     @Override
@@ -280,102 +306,118 @@ public class InMemoryTasksManager extends Tables implements TaskManager {
             }
             System.out.println(countStatusDone + countStatusNew + countStatusProgress);
             if (countStatusNew == k.getSubtasks().size()) {
-                Epic epic = new Epic(k.getID(), k.getName(), k.getDetails(), Status.NEW);
+                Epic epic = new Epic(k.getID(), k.getName(), k.getDetails(), Status.NEW
+                        ,k.getStartTime().toString(), k.getDuration());
                 Tables.allEpics.put(epic.getID(), epic);
                 epic.setSubtasks(k.getSubtasks());
             } else if (countStatusDone == k.getSubtasks().size()) {
-                Epic epic = new Epic(k.getID(), k.getName(), k.getDetails(), Status.DONE);
+                Epic epic = new Epic(k.getID(), k.getName(), k.getDetails(), Status.DONE
+                        ,k.getStartTime().toString(),k.getDuration());
                 Tables.allEpics.put(epic.getID(), epic);
                 epic.setSubtasks(k.getSubtasks());
+
             } else if (countStatusProgress >= 1) {
-                Epic epic = new Epic(k.getID(), k.getName(), k.getDetails(), Status.TO_PROGRESS);
+                Epic epic = new Epic(k.getID(), k.getName(), k.getDetails(), Status.TO_PROGRESS
+                ,k.getStartTime().toString(),k.getDuration());
                 Tables.allEpics.put(epic.getID(), epic);
                 epic.setSubtasks(k.getSubtasks());
+
             }
         }
-        showListEpics();
+     showListEpics();
     }
 
     @Override
-    public void updateEpic() throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        showListEpics();
-        System.out.println("Введите ID эпика, который необходимо обновить");
-        int ID = scanner.nextInt();
-        for (Epic k : Tables.allEpics.values()) {
-            if (k.getID() == ID) {
-                System.out.println("Введите название эпика");
-                Scanner scan = new Scanner(System.in);
-                String name = scan.nextLine();
-                System.out.println("Введите описание эпика ");
-                String details = scan.nextLine();
-                Epic epic = new Epic(ID, name, details, k.getStatus());
-                Tables.allEpics.put(epic.getID(), epic);
-                epic.setSubtasks(k.getSubtasks());
-            }
+    public void updateSubtask(SubTask subTask) throws IOException {
+        subTask.validateTime();
+        if (Tables.allSubTusk.containsKey(subTask.getID())) {
+            Tables.allSubTusk.put(subTask.getID(), subTask);
+            subTask.setEpic(subTask.getEpic());
         }
     }
 
     @Override
-    public void addEpics(Epic epic) throws IOException {
-        Tables.allEpics.put(epic.getID(), epic);
+    public void doneSubtask(int numberTask) throws IOException {
+        showListSubtask();
+        int ID = numberTask;
+        if (!Tables.allSubTusk.isEmpty()) {
+            int count = 0;
+            for (SubTask k : Tables.allSubTusk.values()) {
+
+                if (k.getID() == ID) {
+                    SubTask subTask = new SubTask(k.getID(), k.getName(), k.getDetails(), Status.DONE
+                            ,k.getStartTime().toString(), k.getDuration());
+                    addSubtask(subTask);
+                    subTask.setEpic(k.getEpic());
+                    updateStatusEpic();
+                    showListEpics();
+                } else {
+                    count += 1;
+                }
+            }
+
+            if (count == Tables.allSubTusk.size()) {
+                System.out.println("Задача не найдена");
+            }
+
+        } else {
+            System.out.println("Список подзадач пуст");
+        }
+
     }
 
     @Override
-    public void getEpicByID() throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите ID эпика, который необходимо показать");
-        int ID = scanner.nextInt();
-        for (Epic k : Tables.allEpics.values()) {
-            if (k.getID() == ID) {
-                System.out.println(k.toString());
-                historyManager.add(k);
+    public String toProgressSubtask(int ID) {
+        String text;
+        if(Tables.allSubTusk.containsKey(ID)){
+            SubTask oldSubTask = Tables.allSubTusk.get(ID);
+                SubTask subTask = new SubTask(ID, oldSubTask.getName(), oldSubTask.getDetails(), Status.TO_PROGRESS
+                        ,oldSubTask.getStartTime().toString(),oldSubTask.getDuration());
+            try {
+                addSubtask(subTask);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
+            subTask.setEpic(oldSubTask.getEpic());
+                text = "Статус успешно изменен";
+            updateStatusEpic();
+            showListEpics();
+                return text;
+            }else if (Tables.allSubTusk.isEmpty()){
+            text = "Список подзадач пуст";
+            return text;
+        }else {
+            text = "Подзадача с указанным ID не найдена";
+            return text;
         }
     }
 
     @Override
-    public void updateTask() throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        showListTasks();
-        System.out.println("Введите ID задачи, которую необходимо обновить");
-        int ID = scanner.nextInt();
-        for (Task k : Tables.allTasks.values()) {
-            if (k.getID() == ID) {
-                System.out.println("Введите название задачи");
-                Scanner scan = new Scanner(System.in);
-                String name = scan.nextLine();
-                System.out.println("Введите описание задачи ");
-                String details = scan.nextLine();
-                Task task = new Task(ID, name, details, k.getStatus());
-                addTasks(task);
+    public Set<Task> getPrioritizedTasks() {
+        Set<Task> tasksSubtasks = new TreeSet<>(new Comparator<Task>() {
+            @Override
+            public int compare(Task o1, Task o2) {
+                if(o1.getStartTime() == null) {
+                    return 1;
+                }else if(o2.getStartTime() == null){
+                    return -1;
+                } else if (o1.getStartTime() ==null && o1.getStartTime() ==null){
+                    return 0;
+                }else {
+                    return o1.getStartTime().toString().compareTo(o2.getStartTime().toString());
+                }
             }
-        }
+        });
+        tasksSubtasks.addAll(Tables.allTasks.values());
+        tasksSubtasks.addAll(Tables.allSubTusk.values());
+        return tasksSubtasks;
     }
 
-    @Override
-    public void addTasks(Task o) throws IOException {
-        Tables.allTasks.put(o.getID(), o);
-    }
-
-    public void addTasktoHistory(Task task) {
+    public void addTaskToHistory(Task task) {
         historyManager.add(task);
     }
-
-    @Override
-    public void getTaskByID() throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Введите ID задачи. которую необходимо показать");
-        int ID = scanner.nextInt();
-        for (Task k : Tables.allTasks.values()) {
-            if (k.getID() == ID) {
-                System.out.println(k.toString());
-                historyManager.add(k);
-            }
-        }
-    }
 }
+
 
 
 
