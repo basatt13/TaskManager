@@ -21,8 +21,8 @@ public class InMemoryHistoryManager extends Tables implements HistoryManager {
     }
 
 
-
-    List<Task> getHistory() {
+    @Override
+    public List<Task> getHistory() {
         for(int i=0; i < Tables.tasksHis.size(); i++){
             if(Tables.taskHistory.contains(Tables.tasksHis.get(i).data)) {
                 Tables.taskHistory.remove(Tables.tasksHis.get(i).data);

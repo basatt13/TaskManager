@@ -71,7 +71,13 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
         Tables.deleteData.clear();
         Tables.tasksHis.clear();
         Tables.forGenerateID.clear();
-        fileBackedTaskManager.save();
+        try {
+            fileBackedTaskManager.save();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     // тест метода save();
@@ -79,14 +85,14 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     // shouldReturnFileWithHeadAndOtherBeEmpty() возвращает длину -2 , т.к. сразу закладывается пустая строка,
     // разделяющая задачи и историю
     @Test
-    void shouldReturnFileWithHeadAndOtherBeEmpty() throws IOException {
+    void shouldReturnFileWithHeadAndOtherBeEmpty() throws IOException, InterruptedException {
         resetAllTables();
         fileBackedTaskManager.save();
         Assertions.assertEquals(2, reader().size());
     }
 
     @Test
-    void shouldReturnFileWith4Task() throws IOException {
+    void shouldReturnFileWith4Task() throws IOException, InterruptedException {
         createHistory();
         Tables.allTasks.clear();
         Tables.allSubTusk.clear();
@@ -105,7 +111,11 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     void loadDataIfFileisEmpty() throws IOException {
         createHistory();
         resetAllTables();
-        fileBackedTaskManager.save();
+        try {
+            fileBackedTaskManager.save();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         fileBackedTaskManager.loadFromFile(file);
         Assertions.assertTrue(Tables.allTasks.isEmpty() && Tables.allEpics.isEmpty()
                 && Tables.allSubTusk.isEmpty());
@@ -113,7 +123,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void loadDataWhenEpicHaveNotSubtasks() throws IOException {
+    void loadDataWhenEpicHaveNotSubtasks() throws IOException, InterruptedException {
         createHistory();
         Tables.allTasks.clear();
         Tables.allSubTusk.clear();
@@ -126,7 +136,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    void loadDataFromFile() throws IOException {
+    void loadDataFromFile() throws IOException, InterruptedException {
         createHistory();
         fileBackedTaskManager.save();
         fileBackedTaskManager.loadFromFile(file);

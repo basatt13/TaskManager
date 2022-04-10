@@ -25,6 +25,7 @@ public class InMemoryTasksManager extends Tables implements TaskManager {
             System.out.println("Выбирите другое время для выполнения задачи");
             return;
         }
+        task.setID(generateNumberTask());
         try {
             addTasks(task);
         } catch (IOException e) {
@@ -42,6 +43,7 @@ public class InMemoryTasksManager extends Tables implements TaskManager {
         }else{
             System.out.println("Время свободно");
         }
+        epic.setID(generateNumberTask());
         try {
             addEpics(epic);
         } catch (IOException e) {
@@ -60,6 +62,7 @@ public class InMemoryTasksManager extends Tables implements TaskManager {
         if (Tables.allEpics.isEmpty()) {
             System.out.println("Сначала создайте эпик");
         } else {
+            subTask.setID(generateNumberTask());
             try {
                 addSubtask(subTask);
             } catch (IOException e) {
@@ -92,11 +95,12 @@ public class InMemoryTasksManager extends Tables implements TaskManager {
         if (!Tables.allTasks.isEmpty()) {
             System.out.println("Список всех задач");
             for (Task task : Tables.allTasks.values()) {
-                System.out.println(task.toString());
+                //System.out.println(task.toString());
                 tasks.add(task);
             }
             return tasks;
         } else {
+            System.out.println("Список задач пуст");
             return null;
         }
     }
@@ -416,6 +420,8 @@ public class InMemoryTasksManager extends Tables implements TaskManager {
     public void addTaskToHistory(Task task) {
         historyManager.add(task);
     }
+
+
 }
 
 

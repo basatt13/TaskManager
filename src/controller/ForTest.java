@@ -17,11 +17,11 @@ public class ForTest extends FileBackedTaskManager{
         ForTest forTest = new ForTest("autoSave.csv");
         forTest.loadFromFile(createFileForSave());
         Task task = new Task(forTest.generateNumberTask(), "задача " + forTest.generateNumberTask()
-                ,"описание",Status.NEW,"12.12.22, 01:00",20);
+                ,"описание",Status.NEW,"12.12.22/01:00",20);
         Epic epic = new Epic(forTest.generateNumberTask(), "эпик " + forTest.generateNumberTask()
                 ,"описание",Status.NEW,null,0);
         SubTask subTask = new SubTask(forTest.generateNumberTask(), "подзадача " + forTest.generateNumberTask()
-                ,"описание",Status.NEW,"13.12.22, 01:00",20);
+                ,"описание",Status.NEW,"13.12.22/01:00",20);
         forTest.createTask(task);
         forTest.createTask(task);
         forTest.createEpic(epic);

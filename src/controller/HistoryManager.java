@@ -9,5 +9,5 @@ public interface HistoryManager {
 
     void removeNode(NODE node); // тест создан
 
-
+    List<Task> getHistory();
 }

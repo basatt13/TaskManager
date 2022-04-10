@@ -25,7 +25,7 @@ public class FileBackedTaskManager extends InMemoryTasksManager {
         ForTest.test();
     }
 
-    public void save() {
+    public void save() throws IOException, InterruptedException {
         try (
                 Writer wr = new FileWriter(file, false)) {
             String header = "id,type,name,status,description,startTime, duration, endTime, epic\n";
@@ -173,7 +173,11 @@ public class FileBackedTaskManager extends InMemoryTasksManager {
     public void addSubtask(SubTask subTask)
             throws IOException {
         super.addSubtask(subTask);
-        save();
+        try {
+            save();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -184,7 +188,11 @@ public class FileBackedTaskManager extends InMemoryTasksManager {
     @Override
     public void updateSubtask(SubTask subTask) throws IOException {
         super.updateSubtask(subTask);
-        save();
+        try {
+            save();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -214,7 +222,13 @@ public class FileBackedTaskManager extends InMemoryTasksManager {
             Tables.allEpics.put(epic.getID(), epic);
             epic.setSubtasks(oldEpic.getSubtasks());
             text = "Эпик обновлен";
-            save();
+            try {
+                save();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             return text;
         }else if(Tables.allEpics.isEmpty()){
             text = "Список эпиков пуст";
@@ -229,7 +243,11 @@ public class FileBackedTaskManager extends InMemoryTasksManager {
     @Override
     public void addEpics(Epic epic) throws IOException {
         super.addEpics(epic);
-        save();
+        try {
+            save();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -240,7 +258,13 @@ public class FileBackedTaskManager extends InMemoryTasksManager {
         } else {
             System.out.println(Tables.allEpics.get(ID).toString());
             historyManager.add(Tables.allEpics.get(ID));
-            save();
+            try {
+                save();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             return Tables.allEpics.get(ID);
         }
     }
@@ -253,7 +277,13 @@ public class FileBackedTaskManager extends InMemoryTasksManager {
             Task oldTask = Tables.allTasks.get(task.getID());
             Tables.allTasks.put(task.getID(), task);
             text = "Задача обновлена";
-            save();
+            try {
+                save();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             return text;
         }else if(Tables.allTasks.isEmpty()){
             text = "Список задач пуст";
@@ -264,11 +294,33 @@ public class FileBackedTaskManager extends InMemoryTasksManager {
         }
     }
 
+    @Override
+    public SubTask getSubtaskByID(int ID) {
+            if (Tables.allSubTusk.isEmpty() || !Tables.allSubTusk.containsKey(ID)) {
+
+                return null;
+            } else {
+                System.out.println(Tables.allSubTusk.get(ID).toString());
+                historyManager.add(Tables.allSubTusk.get(ID));
+                try {
+                    save();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return Tables.allSubTusk.get(ID);
+            }
+    }
 
     @Override
     public void addTasks(Task o) throws IOException {
         super.addTasks(o);
-        save();
+        try {
+            save();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -279,8 +331,88 @@ public class FileBackedTaskManager extends InMemoryTasksManager {
         } else {
             System.out.println(Tables.allTasks.get(ID).toString());
             historyManager.add(Tables.allTasks.get(ID));
-            save();
+            try {
+                save();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
             return Tables.allTasks.get(ID);
+        }
+    }
+
+    @Override
+    public String removeTaskByID(int numTask) {
+        String text;
+        if (!Tables.allTasks.isEmpty() && Tables.allTasks.containsKey(numTask)) {
+            Tables.allTasks.remove(numTask);
+            if(Tables.deleteData.containsKey(numTask)) {
+                historyManager.removeNode(Tables.tasksHis.get(Tables.deleteData.get(numTask)));
+            }
+            text = "Задача удалена";
+            try {
+                save();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            return text;
+        } else if (!Tables.allEpics.isEmpty() && Tables.allEpics.containsKey(numTask)) {
+            for (Epic k : Tables.allEpics.values()) {
+                if (k.getID() == numTask) {
+                    for (int l : k.getSubtasks()) {
+                        if (Tables.deleteData.containsKey(l)) {
+                            Tables.allSubTusk.remove(l);
+                            historyManager.removeNode
+                                    (Tables.tasksHis.get(Tables.deleteData.get(l)));
+                        }
+                    }
+                }
+            }
+            Tables.allEpics.remove(numTask);
+            try {
+                save();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            text = "Эпик удален";
+            if(Tables.deleteData.containsKey(numTask)) {
+                historyManager.removeNode(Tables.tasksHis.get(Tables.deleteData.get(numTask)));
+            }
+            return text;
+        } else if (!Tables.allEpics.isEmpty() && Tables.allSubTusk.containsKey(numTask)) {
+            for (SubTask sub : Tables.allSubTusk.values()) {
+                if (sub.getID() == numTask) {
+                    Tables.allSubTusk.remove(numTask);
+                }
+            } if(Tables.deleteData.containsKey(numTask)) {
+                historyManager.removeNode(Tables.tasksHis.get(Tables.deleteData.get(numTask)));
+            }
+            text = "Подзадача удалена";
+            try {
+                save();
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+            return text;
+        }else {
+            text = "Задача с указанным ID не найдена";
+            if(Tables.deleteData.containsKey(numTask)) {
+                historyManager.removeNode(Tables.tasksHis.get(Tables.deleteData.get(numTask)));
+            }
+
+
+            return text;
+        }
+    }
+
+    @Override
+    public void removeAllTask() {
+        Tables.allTasks.clear();
+        Tables.allEpics.clear();
+        Tables.allSubTusk.clear();
+        try {
+            save();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

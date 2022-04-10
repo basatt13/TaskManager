@@ -10,53 +10,53 @@ import java.util.Set;
 
 public interface TaskManager {
 
-    int generateNumberTask(); // тест создан
+    int generateNumberTask();
 
-    void createTask(Task task); // тест создан
+    void createTask(Task task);
 
-    void createEpic (Epic epic) ; // тест создан
+    void createEpic (Epic epic) ;
 
-    void createSubtask(SubTask subTask, int idEpic); // тест создан
+    void createSubtask(SubTask subTask, int idEpic);
 
-    void addTasks(Task o) throws IOException; // тест создан
+    void addTasks(Task o) throws IOException;
 
     void addEpics(Epic epic) throws IOException;
 
-    void addSubtask(SubTask subTask) throws IOException; // тест создан
+    void addSubtask(SubTask subTask) throws IOException;
 
-    List<Task> showListTasks(); // тест создан
+    List<Task> showListTasks(); // эдпоинт создан
 
-    List<Epic> showListEpics(); // тест создан
+    List<Epic> showListEpics();
 
-    List<SubTask> showListSubtask(); // тест создан
+    List<SubTask> showListSubtask();
 
-    List<SubTask> getListSubtasksByEpicID(int numEpic); // тест создан
+    List<SubTask> getListSubtasksByEpicID(int numEpic);
 
-    Task getAnyByID(Tasks task, int numOfTask); // тест создан
+    Task getAnyByID(Tasks task, int numOfTask);
 
-    Task getTaskByID(int ID); // тест создан
+    Task getTaskByID(int ID);
 
-    Epic getEpicByID(int ID); // тест создан
+    Epic getEpicByID(int ID);
 
-    SubTask getSubtaskByID(int numberTask); // тест создан
+    SubTask getSubtaskByID(int numberTask);
 
-    String removeTaskByID(int ID) throws NullPointerException; // тест создан
+    String removeTaskByID(int ID) throws NullPointerException;
 
-    void removeAllTask(); // тест создан
+    void removeAllTask();
 
-    String updateTask(Task task); // тест создан
+    String updateTask(Task task);
 
-    String updateEpic(Epic epic); // тест создан
+    String updateEpic(Epic epic);
 
-    void updateStatusEpic(); // тест создан
+    void updateStatusEpic();
 
-    void updateSubtask(SubTask subTask) throws IOException; // тест создан
+    void updateSubtask(SubTask subTask) throws IOException;
 
-    void doneSubtask(int numberTask) throws IOException; // тест создан
+    void doneSubtask(int numberTask) throws IOException;
 
-    String toProgressSubtask(int numSubtask); // тест создан
+    String toProgressSubtask(int numSubtask);
 
-    Set<Task> getPrioritizedTasks();
+    Set<Task> getPrioritizedTasks(); //эдпоинт создан
 
 
 
