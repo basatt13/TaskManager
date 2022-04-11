@@ -1,8 +1,8 @@
-package Test;
+package test;
 
-import Api.HttpTaskManager;
-import Api.HttpTaskServer;
-import Api.KVServer;
+import api.HttpTaskManager;
+import api.HttpTaskServer;
+import api.KVServer;
 import com.google.gson.Gson;
 import controller.Manager;
 import controller.Status;
@@ -21,10 +21,9 @@ import java.util.Map;
 
 
 public class HttpTest extends Tables {
-
+    final protected HttpClient httpClient = HttpClient.newHttpClient();
 
     HttpResponse<String> createTask(String URL, String keytask, String task) throws IOException, InterruptedException {
-        HttpClient httpClient = HttpClient.newHttpClient();
         URI uri = URI.create(URL);
         Gson gson = new Gson();
         Map<String, String> newTask = new HashMap<>();
@@ -40,7 +39,6 @@ public class HttpTest extends Tables {
     }
 
     void getAllTasks(String URL) throws IOException, InterruptedException {
-        HttpClient httpClient = HttpClient.newHttpClient();
         URI uri = URI.create(URL);
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(uri)
@@ -51,7 +49,6 @@ public class HttpTest extends Tables {
     }
 
     void getTaskByID(String URL) throws IOException, InterruptedException {
-        HttpClient httpClient = HttpClient.newHttpClient();
         URI uri = URI.create(URL);
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(uri)
@@ -62,7 +59,6 @@ public class HttpTest extends Tables {
     }
 
     void deleteTaskByID(String URL) throws IOException, InterruptedException {
-        HttpClient httpClient = HttpClient.newHttpClient();
         URI uri = URI.create(URL);
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(uri)
@@ -75,6 +71,7 @@ public class HttpTest extends Tables {
     //тест создания задачи
     @Test
     void shouldCreateDataInTableAfterCreate() throws IOException, InterruptedException {
+
         KVServer kvServer = new KVServer();
         kvServer.start();
 

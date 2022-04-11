@@ -1,4 +1,4 @@
-package Test;
+package test;
 
 import controller.InMemoryTasksManager;
 import controller.Status;

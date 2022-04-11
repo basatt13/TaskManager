@@ -21,7 +21,7 @@ public class FileBackedTaskManager extends InMemoryTasksManager {
         this.file = file;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         ForTest.test();
     }
 

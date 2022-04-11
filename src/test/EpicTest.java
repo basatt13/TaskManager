@@ -1,4 +1,4 @@
-package Test;
+package test;
 
 import controller.Status;
 import data.Tables;

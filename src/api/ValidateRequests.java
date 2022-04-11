@@ -1,4 +1,4 @@
-package Api;
+package api;
 
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
